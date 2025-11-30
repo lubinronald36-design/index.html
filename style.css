@@ -1,0 +1,72 @@
+
+const quizData = [
+  {
+    question: "What's Ron and Keke's biggest strength?",
+    answers: [
+      { text: "Wealth", correct: false },
+      { text: "Nationality", correct: false },
+      { text: "Philosophy", correct: false },
+      { text: "Core value", correct: true },
+    ],
+    explanation: "Core value is their biggest strength because...",
+  },
+  // Add more questions here...
+];
+
+const quizContainer = document.getElementById("quiz-container");
+let currentQuestion = 0;
+let score = 0;
+
+function loadQuestion() {
+  quizContainer.innerHTML = "";
+  const question = quizData[currentQuestion];
+  const questionElement = document.createElement("div");
+  questionElement.classList.add("question");
+  questionElement.innerHTML = `
+    <p>${question.question}</p>
+    <ul>
+      ${question.answers.map((answer, index) => `
+        <li>
+          <input type="radio" name="answer" id="answer-${index}" value="${index}">
+          <label for="answer-${index}">${answer.text}</label>
+        </li>
+      `).join("")}
+    </ul>
+  `;
+  quizContainer.appendChild(questionElement);
+  const answerInputs = document.querySelectorAll("input[name='answer']");
+  answerInputs.forEach((input) => {
+    input.addEventListener("change", checkAnswer);
+  });
+}
+
+function checkAnswer(event) {
+  const selectedAnswer = event.target.value;
+  const correctAnswer = quizData[currentQuestion].answers.findIndex((answer) => answer.correct);
+  if (selectedAnswer == correctAnswer) {
+    score++;
+    alert(`Bravo! ${quizData[currentQuestion].explanation}`);
+  } else {
+    alert(`Too bad! The correct answer was ${quizData[currentQuestion].answers[correctAnswer].text}. ${quizData[currentQuestion].explanation}`);
+  }
+  currentQuestion++;
+  if (currentQuestion >= quizData.length) {
+    endQuiz();
+  } else {
+    loadQuestion();
+  }
+}
+
+function endQuiz() {
+  quizContainer.innerHTML = `
+    <h2>Quiz finished!</h2>
+    <p>Your score: ${score} / ${quizData.length}</p>
+  `;
+}
+
+// Add a start button
+const startButton = document.createElement("button");
+startButton.textContent = "Start Quiz";
+quizContainer.appendChild(startButton);
+startButton.addEventListener("click", loadQuestion);
+
